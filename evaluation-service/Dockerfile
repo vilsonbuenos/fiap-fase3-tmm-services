@@ -26,11 +26,8 @@ WORKDIR /app
 # Copia APENAS o arquivo de manifesto de dependências antes do código-fonte.
 # Técnica de cache de camadas: se go.mod não mudar entre builds,
 # o Docker reutiliza a camada de download de módulos, acelerando o build.
-COPY go.mod go.sum* ./
-
-# Baixa todas as dependências declaradas em go.mod para o cache local do Go.
-# Executado antes de copiar o código para maximizar o reuso do cache.
-RUN go mod download
+COPY go.mod ./
+RUN go mod tidy
 
 # Copia todos os arquivos .go (código-fonte da aplicação).
 # Feito após o download para que mudanças no código não invalidem o cache de módulos.
