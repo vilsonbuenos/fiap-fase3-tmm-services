@@ -106,7 +106,7 @@ func main() {
 	mux.HandleFunc("/evaluation/evaluate", app.evaluationHandler)
 
 	log.Printf("Serviço de Avaliação (Go) rodando na porta %s", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil { // #nosec G114 -- bind local do servico
 		log.Fatal(err)
 	}
 }

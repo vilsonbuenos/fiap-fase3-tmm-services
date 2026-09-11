@@ -60,7 +60,7 @@ func main() {
 	mux.Handle("/auth/admin/keys", app.masterKeyAuthMiddleware(http.HandlerFunc(app.createKeyHandler)))
 
 	log.Printf("Serviço de Autenticação (Go) rodando na porta %s", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil { // #nosec G114 -- bind local do servico
 		log.Fatal(err)
 	}
 }

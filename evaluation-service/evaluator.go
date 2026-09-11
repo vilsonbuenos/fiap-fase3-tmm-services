@@ -104,7 +104,7 @@ func (a *App) fetchFlag(flagName string) (*Flag, error) {
 	url := fmt.Sprintf("%s/flags/%s", a.FlagServiceURL, flagName)
 
 	apiKey := os.Getenv("SERVICE_API_KEY")
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil) // #nosec G107 -- URL = servico interno + flag
 	if err != nil {
 		return nil, fmt.Errorf("erro ao criar request do flag-service: %w", err)
 	}
@@ -137,7 +137,7 @@ func (a *App) fetchFlag(flagName string) (*Flag, error) {
 func (a *App) fetchRule(flagName string) (*TargetingRule, error) {
 	url := fmt.Sprintf("%s/rules/%s", a.TargetingServiceURL, flagName)
 	apiKey := os.Getenv("SERVICE_API_KEY")
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil) // #nosec G107 -- URL = servico interno + flag
 	if err != nil {
 		return nil, fmt.Errorf("erro ao criar request do targeting-service: %w", err)
 	}

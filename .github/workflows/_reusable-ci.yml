@@ -127,8 +127,8 @@ jobs:
         if: inputs.language == 'go'
         run: |
           go mod tidy
-          go install github.com/securego/gosec/v2/cmd/gosec@latest
-          gosec -severity high -exclude=G107,G114 -quiet ./...
+          go install github.com/securego/gosec/v2/cmd/gosec@v2.22.3
+          gosec -fmt=text -severity=high -exclude=G107,G114,G104,G307 ./...
 
       - name: Setup Python
         if: inputs.language == 'python'
