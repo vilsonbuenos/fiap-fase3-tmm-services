@@ -5,9 +5,8 @@
 # de produção mínima (~10 MB) sem compilador, código-fonte ou cache de módulos.
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Usa a imagem oficial Go 1.21 baseada em Alpine (Linux mínimo ~5 MB).
-# O alias "builder" permite que o Stage 2 referencie este estágio via --from=builder.
-FROM golang:1.21-alpine AS builder
+# Go 1.25: corrige CVE-2025-68121 (CRITICAL no stdlib crypto/tls do 1.21).
+FROM golang:1.25-alpine AS builder
 
 # Instala o git via gerenciador de pacotes Alpine.
 # --no-cache : não salva o índice de pacotes na imagem (economiza espaço).
@@ -27,7 +26,7 @@ WORKDIR /app
 # Copia APENAS o arquivo de manifesto de dependências antes do código-fonte.
 # Técnica de cache de camadas: se go.mod não mudar entre builds,
 # o Docker reutiliza a camada de download de módulos, acelerando o build.
-COPY go.mod ./
+COPY go.mod go.sum* ./
 
 # Baixa todas as dependências declaradas em go.mod para o cache local do Go.
 # Executado antes de copiar o código para maximizar o reuso do cache.
@@ -59,8 +58,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 # Resultado: imagem final sem compilador Go, sem código-fonte, sem módulos.
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Alpine 3.19 como base de runtime (~5 MB). Muito menor que a imagem golang (~300 MB).
-FROM alpine:3.19
+FROM alpine:3.21
 
 # Instala dois pacotes essenciais para aplicações de produção:
 # ca-certificates : certificados TLS raiz, necessários para conexões HTTPS/TLS

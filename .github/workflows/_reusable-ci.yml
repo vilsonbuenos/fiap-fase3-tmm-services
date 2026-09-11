@@ -46,7 +46,7 @@ jobs:
         if: inputs.language == 'go'
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.25"
 
       - name: Go test
         if: inputs.language == 'go'
@@ -80,7 +80,7 @@ jobs:
         if: inputs.language == 'go'
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.25"
 
       - name: Download Go modules
         if: inputs.language == 'go'
@@ -88,12 +88,13 @@ jobs:
 
       - name: golangci-lint
         if: inputs.language == 'go'
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
-          version: v1.61.0
+          version: latest
           working-directory: ${{ inputs.working_directory }}
           args: --timeout=3m
           skip-cache: true
+          verify: false
 
       - name: Setup Python
         if: inputs.language == 'python'
@@ -120,7 +121,7 @@ jobs:
         if: inputs.language == 'go'
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.25"
 
       - name: gosec (SAST Go)
         if: inputs.language == 'go'
