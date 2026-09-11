@@ -174,17 +174,13 @@ jobs:
           ignore-unfixed: true
 
       - name: Skip ECR and GitOps
-        if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          (inputs.skip_aws_push || secrets.AWS_ACCESS_KEY_ID == '')
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && inputs.skip_aws_push
         run: |
           echo "DevSecOps concluido (test, lint, SAST, SCA, image scan)."
-          echo "ECR e GitOps ignorados: SKIP_AWS_PUSH=true ou secrets AWS ausentes."
+          echo "ECR e GitOps ignorados: SKIP_AWS_PUSH esta ativo."
 
       - name: Configure AWS credentials
-        if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          inputs.skip_aws_push == false && secrets.AWS_ACCESS_KEY_ID != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && inputs.skip_aws_push == false
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -192,15 +188,11 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login ECR
-        if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          inputs.skip_aws_push == false && secrets.AWS_ACCESS_KEY_ID != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && inputs.skip_aws_push == false
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Push ECR
-        if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          inputs.skip_aws_push == false && secrets.AWS_ACCESS_KEY_ID != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && inputs.skip_aws_push == false
         env:
           ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
           REGION: ${{ secrets.AWS_REGION }}
@@ -211,13 +203,13 @@ jobs:
           docker push "$DEST"
 
       - name: Update GitOps image tag
-        if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          inputs.skip_aws_push == false && secrets.GITOPS_TOKEN != '' && secrets.GITOPS_REPO != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && inputs.skip_aws_push == false
         env:
           TAG: ${{ steps.meta.outputs.tag }}
+          GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}
+          GITOPS_REPO: ${{ secrets.GITOPS_REPO }}
         run: |
-          git clone "https://x-access-token:${{ secrets.GITOPS_TOKEN }}@github.com/${{ secrets.GITOPS_REPO }}.git" gitops
+          git clone "https://x-access-token:${GITOPS_TOKEN}@github.com/${GITOPS_REPO}.git" gitops
           FILE="gitops/apps/${{ inputs.service_name }}/deployment.yaml"
           sed -i -E "s|(image: .*/${{ inputs.service_name }}:)[^[:space:]]+|\\1${TAG}|" "$FILE"
           cd gitops
