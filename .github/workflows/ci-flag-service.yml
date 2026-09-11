@@ -1,0 +1,26 @@
+name: CI flag-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "flag-service/**"
+      - ".github/workflows/ci-flag-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "flag-service/**"
+      - ".github/workflows/ci-flag-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      service_name: flag-service
+      language: python
+      working_directory: flag-service
+      skip_aws_push: ${{ vars.SKIP_AWS_PUSH != 'false' }}
+    secrets: inherit

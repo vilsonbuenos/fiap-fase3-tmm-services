@@ -1,0 +1,26 @@
+name: CI auth-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "auth-service/**"
+      - ".github/workflows/ci-auth-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "auth-service/**"
+      - ".github/workflows/ci-auth-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      service_name: auth-service
+      language: go
+      working_directory: auth-service
+      skip_aws_push: ${{ vars.SKIP_AWS_PUSH != 'false' }}
+    secrets: inherit

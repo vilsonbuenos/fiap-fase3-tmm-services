@@ -1,0 +1,26 @@
+name: CI evaluation-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "evaluation-service/**"
+      - ".github/workflows/ci-evaluation-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "evaluation-service/**"
+      - ".github/workflows/ci-evaluation-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      service_name: evaluation-service
+      language: go
+      working_directory: evaluation-service
+      skip_aws_push: ${{ vars.SKIP_AWS_PUSH != 'false' }}
+    secrets: inherit

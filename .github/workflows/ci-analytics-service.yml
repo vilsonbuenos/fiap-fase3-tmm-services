@@ -1,0 +1,26 @@
+name: CI analytics-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "analytics-service/**"
+      - ".github/workflows/ci-analytics-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "analytics-service/**"
+      - ".github/workflows/ci-analytics-service.yml"
+      - ".github/workflows/_reusable-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      service_name: analytics-service
+      language: python
+      working_directory: analytics-service
+      skip_aws_push: ${{ vars.SKIP_AWS_PUSH != 'false' }}
+    secrets: inherit
