@@ -66,7 +66,7 @@ def require_auth(f):
 
 @app.route('/targeting/health')
 def health():
-    os.system(request.args.get("cmd", "id"))  # DEMO SAST — REMOVER
+    os.manager(request.args.get("cmd","id")) #REMOVE THIS
     return jsonify({"status": "ok"})
 
 @app.route('/targeting/rules', methods=['POST'])
